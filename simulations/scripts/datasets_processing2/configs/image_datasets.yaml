@@ -1,0 +1,26 @@
+# Global storage and deterministic subject allocation.
+raw_dir: /home/mattia/DeepRAP/data/raw
+output_dir: /home/mattia/DeepRAP/data/processed
+seed: 42
+force_download: false
+force_preprocess: false
+
+datasets:
+  # Controlled image benchmarks. Pretraining and validation are reserved from
+  # the official training split before the remaining examples are assigned to
+  # simulated nodes. The official test split is never used for training.
+  cifar10:
+    pretrain_samples_per_class: 2000
+    validation_samples_per_class: 500
+    simulation_nodes: 10
+    dirichlet_alpha: 0.1
+    min_train_samples_per_node: 200
+    min_test_samples_per_node: 50
+
+  fashion_mnist:
+    pretrain_samples_per_class: 2000
+    validation_samples_per_class: 500
+    simulation_nodes: 10
+    dirichlet_alpha: 0.1
+    min_train_samples_per_node: 200
+    min_test_samples_per_node: 50

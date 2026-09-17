@@ -1,0 +1,18 @@
+Memory Configuration
+
+Name             Origin             Length             Attributes
+FLASH            0x0000000000000000 0x0000000000001000 xr
+RAM              0x0000000020000000 0x0000000000000800 xrw
+
+Linker script and memory map
+
+.text           0x0000000000000000       0x40
+ .text.base     0x0000000000000000       0x10 base.o
+ .text.encoder  0x0000000000000010       0x10 pulse_encoder.o
+ .text.head     0x0000000000000020       0x10 pulse_head.o
+ .text.pulse    0x0000000000000030       0x10 pulse_state.o
+.data           0x0000000020000000       0x10
+ .data.pulse    0x0000000020000000       0x10 pulse_state.o
+.bss            0x0000000020000010       0x20
+ .bss.gradient  0x0000000020000010       0x20 gradient.o
+

@@ -1,0 +1,88 @@
+{
+  "checkpoint": "/var/home/mattia/DeepRAP/opportunistic_simulator/data/checkpoints/uci_har_encoder.pt",
+  "dataset": {
+    "evaluation": {
+      "data_file": "/var/home/mattia/DeepRAP/opportunistic_simulator/data/processed/uci_har/data.h5",
+      "num_samples": 1378,
+      "source_files": [],
+      "splits": [
+        "validation"
+      ]
+    },
+    "files": {
+      "data": "/var/home/mattia/DeepRAP/opportunistic_simulator/data/processed/uci_har/data.h5",
+      "descriptor": "/var/home/mattia/DeepRAP/opportunistic_simulator/data/processed/uci_har/dataset.json",
+      "manifest": "/var/home/mattia/DeepRAP/opportunistic_simulator/data/processed/uci_har/manifest.csv"
+    },
+    "name": "uci_har",
+    "requested_path": "../data/processed/uci_har",
+    "total_samples": 10299,
+    "training": {
+      "data_file": "/var/home/mattia/DeepRAP/opportunistic_simulator/data/processed/uci_har/data.h5",
+      "num_samples": 8921,
+      "source_files": [],
+      "splits": [
+        "pretrain"
+      ]
+    }
+  },
+  "elapsed_seconds": 1261.985323,
+  "format_version": 1,
+  "model": {
+    "classifier": "MLPClassifier(hidden_dims=[64])",
+    "embedding_dim": 64,
+    "encoder": "imu_encoder_tiny",
+    "input_branches": [
+      "imu"
+    ],
+    "num_classes": 6
+  },
+  "result": {
+    "best_epoch": 8,
+    "best_eval_accuracy": 0.8171262699564587,
+    "best_eval_f1": 0.8360546331981223,
+    "best_eval_loss": 0.4762479484254286,
+    "checkpoint_contains": "best_encoder_only",
+    "epochs_completed": 26,
+    "stop_reason": "early_stopping",
+    "stopped_early": true
+  },
+  "runtime": {
+    "h5py": "3.16.0",
+    "numpy": "2.4.4",
+    "python": "3.14.7",
+    "pytorch": "2.13.0+cu126"
+  },
+  "status": "completed",
+  "training_log": "/var/home/mattia/DeepRAP/opportunistic_simulator/data/checkpoints/uci_har_encoder_training_log.csv",
+  "training_parameters": {
+    "batch_size": 64,
+    "device_requested": "auto",
+    "device_resolved": "cuda",
+    "early_stopping": {
+      "min_delta": 0.001,
+      "mode": "max",
+      "monitor": "eval_f1",
+      "patience": 20,
+      "restore_best": true
+    },
+    "epochs": 100,
+    "eval_split_priority": [
+      "validation",
+      "test"
+    ],
+    "f1_average": "macro",
+    "learning_rate": 0.001,
+    "log_interval": 10,
+    "loss": "cross_entropy",
+    "num_workers": 0,
+    "optimizer": "AdamW",
+    "seed": 42,
+    "train_split_priority": [
+      "pretrain",
+      "train",
+      "full"
+    ],
+    "weight_decay": 0.0
+  }
+}

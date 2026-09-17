@@ -1,0 +1,17 @@
+{
+  "model": "edge_markov",
+  "seed": 123,
+  "num_nodes": 10,
+  "duration": 86400,
+  "time_step": 20,
+  "num_contact_events": 3597,
+  "num_unique_pairs": 45,
+  "mean_events_per_snapshot": 0.8324461930108771,
+  "parameters": {
+    "contact_probability": 0.02,
+    "persistence": 0.9,
+    "num_communities": 3,
+    "intra_contact_probability": 0.35,
+    "inter_contact_probability": 0.02
+  }
+}

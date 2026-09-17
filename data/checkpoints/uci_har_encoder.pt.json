@@ -1,0 +1,17 @@
+{
+  "best_epoch": 8,
+  "best_eval_f1": 0.8360546331981223,
+  "branches": [
+    "imu"
+  ],
+  "dataset": "uci_har",
+  "embedding_dim": 64,
+  "encoder_name": "imu_encoder_tiny",
+  "f1_average": "macro",
+  "format_version": 3,
+  "num_classes": 6,
+  "seed": 42,
+  "selection_metric": "eval_f1",
+  "training_log": "uci_har_encoder_training_log.csv",
+  "training_summary": "uci_har_encoder_training_summary.json"
+}

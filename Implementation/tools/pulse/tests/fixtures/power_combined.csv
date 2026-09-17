@@ -1,0 +1,9 @@
+time_s,initiator_current_a,responder_current_a,initiator_gpio0,initiator_gpio1,initiator_gpio2,initiator_gpio3,responder_gpio0,responder_gpio1,responder_gpio2,responder_gpio3
+0.0,0.01,0.02,0,0,0,0,0,0,0,0
+0.1,0.01,0.02,0,0,0,0,0,0,0,0
+0.2,0.10,0.02,1,1,0,0,0,0,0,0
+0.3,0.10,0.20,1,0,0,1,1,1,0,1
+0.4,0.10,0.20,1,1,0,1,1,1,1,0
+0.5,0.01,0.02,0,0,0,0,0,0,0,0
+0.6,0.01,0.02,0,0,0,0,0,0,0,0
+

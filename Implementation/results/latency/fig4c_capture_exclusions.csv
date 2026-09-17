@@ -1,0 +1,15 @@
+source_file,source_line,event_path,role,trial_id,stage,reason
+results\COM10_2026_09_15.14.13.01.333.txt,2088,accepted_connected,initiator,29,agreement,corrupt_duration
+results\COM10_2026_09_15.14.13.01.333.txt,2857,accepted_connected,initiator,88,,missing_stage_label
+results\COM10_2026_09_15.14.13.01.333.txt,3179,accepted_discovery,initiator,6,mixing,corrupt_duration
+results\COM10_2026_09_15.14.13.01.333.txt,3218,accepted_discovery,initiator,9,,missing_or_non_success_label
+results\COM10_2026_09_15.14.13.01.333.txt,3531,accepted_discovery,initiator,30,,missing_stage_label
+results\COM10_2026_09_15.14.13.01.333.txt,3621,accepted_discovery,initiator,36,head_serialization,corrupt_duration
+results\COM10_2026_09_15.14.13.01.333.txt,4362,accepted_discovery,initiator,85,agreement,corrupt_duration
+results\COM10_2026_09_15.14.13.01.333.txt,4544,accepted_discovery,initiator,97,mixing,corrupt_duration
+results\COM8_2026_09_15.14.13.18.261.txt,1136,accepted_connected,responder,6,gradient_transfer,corrupt_duration
+results\COM8_2026_09_15.14.13.18.261.txt,1159,accepted_connected,responder,9,gradient_serialization,corrupt_duration
+results\COM8_2026_09_15.14.13.18.261.txt,1467,accepted_connected,responder,48,head_deserialization,corrupt_duration
+results\COM8_2026_09_15.14.13.18.261.txt,2463,accepted_discovery,responder,67,,missing_stage_label
+results\COM8_2026_09_15.14.13.18.261.txt,2479,accepted_discovery,responder,69,gradient_serialization,missing_or_non_success_label
+results\COM8_2026_09_15.14.13.18.261.txt,2541,accepted_discovery,responder,77,responder_encoder,missing_or_non_success_label

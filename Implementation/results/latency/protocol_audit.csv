@@ -1,0 +1,14 @@
+audit_type,event_path,role,connection_state,run_id,pair_id,board_id,required_stratum,stratum_check,post_warmup_repetitions,minimum_required,repetition_check,success_label_present,warmup_label_present,pair_id_present,run_id_present,board_id_present,independent_pair_count,failure_count,failure_rate,accepted_initiator_count,accepted_responder_count,integrity_check,integrity_issue_count,integrity_issues
+stratum,local,local,connected,,,,1,underfilled,98,100,fail,1,1,1,1,1,1,0,0,,,pass,0,
+stratum,no_contact,local,disconnected,,,,1,pass,100,100,pass,1,1,1,1,1,1,0,0,,,pass,0,
+stratum,accepted_connected,initiator,connected,,,,1,pass,100,100,pass,1,1,1,1,1,1,0,0,,,pass,0,
+stratum,accepted_discovery,initiator,disconnected,,,,1,pass,100,100,pass,1,1,1,1,1,1,0,0,,,pass,0,
+stratum,accepted_connected,responder,connected,,,,0,not_required,100,,not_required,1,1,1,1,1,1,0,0,,,pass,0,
+stratum,accepted_discovery,responder,connected,,,,0,not_required,100,,not_required,1,1,1,1,1,1,0,0,,,pass,0,
+stratum,local,local,,,,,0,not_required,1,,not_required,0,1,1,1,1,1,0,,,,pass,0,
+stratum,local,local,ctimeout_0,,,,0,not_required,1,,not_required,0,1,1,1,1,1,0,,,,pass,0,
+capture_stratum,local,local,connected,p01-latency-r01,p01,f5ea5fa8fcfa5209,1,underfilled,98,100,fail,1,1,1,1,1,1,0,0,,,pass,0,
+capture_stratum,no_contact,local,disconnected,p01-latency-r01,p01,f5ea5fa8fcfa5209,1,pass,100,100,pass,1,1,1,1,1,1,0,0,,,pass,0,
+capture_stratum,accepted_connected,initiator,connected,p01-latency-r01,p01,f5ea5fa8fcfa5209,1,pass,100,100,pass,1,1,1,1,1,1,0,0,,,pass,0,
+capture_stratum,accepted_discovery,initiator,disconnected,p01-latency-r01,p01,f5ea5fa8fcfa5209,1,pass,100,100,pass,1,1,1,1,1,1,0,0,,,pass,0,
+accepted_session_pairing,accepted_sessions,initiator_responder,exact_run_pair_exchange,,,,0,not_applicable,200,,not_applicable,1,1,1,1,1,1,,,210,210,fail,3,"record 22 missing/invalid labels: success | record 79 missing/invalid labels: connection_state,success | record 612 accepted responder requires remote_session_started=1"

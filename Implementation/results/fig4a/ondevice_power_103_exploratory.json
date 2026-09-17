@@ -1,0 +1,33 @@
+{
+  "figure_status": "exploratory_not_validated_final_capture",
+  "initiator_source": "capture\\p01\\keysight-initiator-r03\\keysight_34465a_initiator_samples.csv",
+  "initiator_sha256": "b4e9661a56a3c1644e95fae2f73d0d1f8908d78c524bac532dc0bb3b69e86c16",
+  "responder_source": "capture\\p01\\keysight-responder-r01\\keysight_34465a_responder_stream_raw.csv",
+  "responder_sha256": "a4f7ac34dc9a06f49ae452a0a5665f9b2c5ff7095fb1a560183ac82e5abc82cc",
+  "supply_voltage_v": 3.7,
+  "sample_interval_s": 0.02,
+  "window_posttrigger_s": 4.1,
+  "baseline": "mean of 20 pre-onset readings",
+  "warmup_excluded_per_path": 5,
+  "recorded_counts": {
+    "initiator": 105,
+    "responder": 103
+  },
+  "measured_counts": {
+    "initiator": 100,
+    "responder": 98
+  },
+  "trace_semantics": "independently selected median-energy event per role, onset-aligned; not synchronized",
+  "median_incremental_energy_mj": {
+    "initiator": 26.850192458342498,
+    "responder": 4.450506495246999
+  },
+  "raw_readings": 65034,
+  "candidate_onsets": 105,
+  "excluded_onset_indices": [
+    34460,
+    54253
+  ],
+  "retained_onsets": 103,
+  "adjacent_exact_repeats": 74
+}

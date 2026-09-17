@@ -1,0 +1,27 @@
+# Global paths and deterministic subject-level allocation.
+raw_dir: /home/mattia/DeepRAP/opportunistic_simulator/data/raw
+output_dir: /home/mattia/DeepRAP/opportunistic_simulator/data/processed
+seed: 42
+
+# Keep existing raw archives. Audio-IMU Cough must be downloaded manually.
+force_download: false
+
+# Set this to true for the first run so that existing full-dataset outputs are
+# rebuilt with subject-disjoint pretraining, validation, and simulation splits.
+# Set it back to false after all datasets have been regenerated successfully.
+force_preprocess: true
+
+datasets:
+  # 30 subjects: 26 pretraining, 4 validation, 0 simulation.
+  uci_har:
+    pretrain_users: 26
+    validation_users: 4
+    simulation_users: 0
+
+  # HHAR has only 9 subjects, so it cannot provide 10 simulation users.
+  # It is only used for simulations, adapting the encoder trained
+  # with UCI-HAR
+  hhar:
+    pretrain_users: 0
+    validation_users: 0
+    simulation_users: 9

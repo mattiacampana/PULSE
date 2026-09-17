@@ -1,0 +1,62 @@
+# Global storage and deterministic subject allocation.
+raw_dir: data/raw
+output_dir: data/processed
+seed: 42
+force_download: false
+force_preprocess: false
+
+datasets:
+  # Controlled image benchmarks. Pretraining and validation are reserved from
+  # the official training split before the remaining examples are assigned to
+  # simulated nodes. The official test split is never used for training.
+  cifar10:
+    pretrain_samples_per_class: 1000
+    validation_samples_per_class: 250
+    simulation_nodes: 10
+    dirichlet_alpha: 0.1
+    min_train_samples_per_node: 200
+    min_test_samples_per_node: 50
+
+  fashion_mnist:
+    pretrain_samples_per_class: 1000
+    validation_samples_per_class: 250
+    simulation_nodes: 10
+    dirichlet_alpha: 0.1
+    min_train_samples_per_node: 200
+    min_test_samples_per_node: 50
+
+  # Empty mappings mean full-dataset mode. This supports using all UCI HAR for
+  # pretraining and all HHAR as opportunistic simulation nodes.
+  uci_har: {}
+  #hhar: {}
+
+  wesad:
+    window_seconds: 60
+    stride_seconds: 30
+    pretrain_users: 5
+    validation_users: 0
+    simulation_users: 10
+
+  sisfall:
+    window_seconds: 2.56
+    stride_seconds: 1.28
+    pretrain_users: 20
+    validation_users: 8
+    simulation_users: 10
+
+  ringauth:
+    window_seconds: 3
+    target_rate_hz: 100
+    source_rate_hz: 100
+
+  pads:
+    window_seconds: 2.56
+    stride_seconds: 2.56
+
+  audio_imu_cough:
+    window_seconds: 2
+    imu_source_rate_hz: 100
+
+  pulse_transit_time:
+    window_seconds: 10
+    source_rate_hz: 1000

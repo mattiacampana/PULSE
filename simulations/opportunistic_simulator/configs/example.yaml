@@ -1,0 +1,64 @@
+# Example: simulate HHAR subjects with an encoder pretrained on UCI-HAR.
+seeds: [7]
+
+mobility:
+  path: ../data/mobility/community_seed7.csv
+  node_assignment: random
+
+data:
+  # Directory containing data.h5, manifest.csv, and dataset.json.
+  path: ../data/processed/hhar
+  source_split: simulation
+  allow_full_fallback: false            # true only for an ex-novo corpus prepared in full mode
+  loading_mode: cache_embeddings        # recommended when the encoder is frozen
+  cache_batch_size: 1024                # precompute batch; reduce if CUDA runs out of memory
+  cache_num_workers: 4                  # parallel HDF5 readers; tune to CPU/storage
+  cache_pin_memory: true                # asynchronous CPU-to-CUDA copies
+  cache_prefetch_factor: 2              # queued batches per worker
+  num_nodes: null                       # null uses every subject in the selected split
+  node_selection: random
+  train_fraction: 0.70
+  val_fraction: 0.15
+  test_fraction: 0.15
+
+model:
+  encoder: auto
+  input_channels: null
+  embedding_dim: auto
+  num_classes: auto
+  classifier_hidden_dims: [64]
+
+pretraining:
+  # This checkpoint may come from another compatible dataset.
+  checkpoint: ../data/checkpoints/uci_har_encoder.pt
+  freeze_encoder: true
+
+training:
+  interval: 300
+  local_steps: 2
+  batch_size: 16
+  evaluation_batch_size: 1024            # independent from the SGD batch size
+  learning_rate: 0.01
+
+algorithm:
+  name: oppfl                         # local | oppavg | oppfl | optimist | pulse
+
+opportunistic_fl:
+  similarity_threshold: 0.0
+  lambda_weight: 1.0
+  encounter_rounds: 1
+  aggregation: momentum
+
+pulse:
+  alpha_max: 0.5
+  utility_momentum: 0.2
+  initial_utility: 0.5
+  ucb_exploration: 0.25
+  norm_epsilon: 1.0e-12
+
+evaluation:
+  interval: 900
+
+logging:
+  progress_interval: 900
+  output_dir: ../results/hhar/example

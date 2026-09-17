@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "deeprap-wearable-datasets"
+version = "0.1.6"
+description = "Model-ready wearable dataset preparation for DeepRAP"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["h5py>=3.8", "numpy>=1.24", "pandas>=2.0", "PyYAML>=6.0", "scipy>=1.10"]
+
+[project.optional-dependencies]
+test = ["pytest>=7.4"]
+audio = ["librosa>=0.10", "soundfile>=0.12"]
+vision = ["torch>=2.2", "torchvision>=0.17"]
+
+[project.scripts]
+prepare-wearable-datasets = "wearable_datasets.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["wearable_datasets*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

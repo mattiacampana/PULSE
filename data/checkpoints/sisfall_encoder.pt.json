@@ -1,0 +1,17 @@
+{
+  "best_epoch": 18,
+  "best_eval_f1": 0.7826323669524976,
+  "branches": [
+    "imu"
+  ],
+  "dataset": "sisfall",
+  "embedding_dim": 64,
+  "encoder_name": "imu_encoder_tiny_tcn",
+  "f1_average": "binary",
+  "format_version": 3,
+  "num_classes": 2,
+  "seed": 42,
+  "selection_metric": "eval_f1",
+  "training_log": "sisfall_encoder_training_log.csv",
+  "training_summary": "sisfall_encoder_training_summary.json"
+}

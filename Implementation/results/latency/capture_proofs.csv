@@ -1,0 +1,1 @@
+board_id,schema,path,firmware_sequence,sequence,trial_id,exchange_id,role,warmup,record_ready,passive_expected,success,failure_reason,remote_session_started,event_duration_us,event_errno,infrastructure_errno,result_release_errno,initial_head_hash,result_head_hash,firmware_revision_hash,artifact_hash,source_file,source_line,record_index

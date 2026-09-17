@@ -1,0 +1,20 @@
+# Python and notebook caches
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# macOS metadata
+.DS_Store
+._*
+
+# Local build and temporary output
+build/
+dist/
+*.tmp
+*.temp
+*.swp
+*.swo
+*~

@@ -1,0 +1,21 @@
+{
+  "best_epoch": 14,
+  "best_eval_f1": 0.8775974382552503,
+  "branches": [
+    "image"
+  ],
+  "dataset": "fashion_mnist",
+  "embedding_dim": 64,
+  "encoder_kwargs": {
+    "embedding_dim": 64,
+    "input_channels": 1
+  },
+  "encoder_name": "image_encoder_tiny_cnn",
+  "f1_average": "macro",
+  "format_version": 4,
+  "num_classes": 10,
+  "seed": 42,
+  "selection_metric": "eval_f1",
+  "training_log": "fmnist_encoder_training_log.csv",
+  "training_summary": "fmnist_encoder_training_summary.json"
+}

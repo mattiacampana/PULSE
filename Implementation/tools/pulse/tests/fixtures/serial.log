@@ -1,0 +1,8 @@
+[00:00:00.001] boot noise
+PULSE_META,run_id=synthetic,pair_id=pair01,board_id=board_a,role=initiator,marker_stage_1=selection,marker_stage_5=radio_transfer
+PULSE_EVENT,run_id=synthetic,pair_id=pair01,board_id=board_a,role=initiator,trial_id=1,event_index=0,exchange_id=41,remote_session_started=1,event_path=accepted_connected,connection_state_start=connected,warmup=0,success=1,duration_us=300000
+[00:00:01.250,000] <inf> app: PULSE_STAGE,trial_id=1,event_path=accepted_connected,stage_code=1,stage=selection,duration_us=50000,cycles=6400000,success=1
+PULSE_CORRECTNESS,trial_id=1,gradient_cosine_similarity=0.9999,max_abs_parameter_error=0.00001,success=1
+PULSE_META,run_id=synthetic,pair_id=pair01,board_id=board_b,role=responder
+PULSE_EVENT,header,run_id,pair_id,board_id,role,trial_id,event_index,exchange_id,remote_session_started,event_path,connection_state_start,warmup,success,duration_us
+PULSE_EVENT,synthetic,pair01,board_b,responder,1,0,41,1,accepted_connected,connected,0,1,200000

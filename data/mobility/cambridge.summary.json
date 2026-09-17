@@ -1,0 +1,38 @@
+{
+  "dataset": "cambridge_haggle_experiment_2",
+  "source_file": "/home/mattia/DeepRAP/opportunistic_simulator/data/mobility/haggle/raw/cambridge/Exp2/contacts.Exp2.dat",
+  "allowed_internal_nodes": [
+    "trace_1",
+    "trace_2",
+    "trace_3",
+    "trace_4",
+    "trace_5",
+    "trace_6",
+    "trace_7",
+    "trace_8",
+    "trace_9",
+    "trace_10",
+    "trace_11",
+    "trace_12"
+  ],
+  "snapshot_step_seconds": 120,
+  "num_nodes_observed": 12,
+  "nodes_observed": [
+    "trace_1",
+    "trace_10",
+    "trace_11",
+    "trace_12",
+    "trace_2",
+    "trace_3",
+    "trace_4",
+    "trace_5",
+    "trace_6",
+    "trace_7",
+    "trace_8",
+    "trace_9"
+  ],
+  "num_contact_events": 10387,
+  "num_unique_pairs": 66,
+  "duration_seconds": 455640,
+  "time_normalized_to_zero": true
+}

@@ -1,0 +1,570 @@
+menu "SensWear firmware"
+
+choice SENSWEAR_DAUGHTER_BOARD
+	prompt "SensWear daughter board"
+	default SENSWEAR_DAUGHTER_TOUCH if SHIELD_SENSWEAR_TOUCH
+	default SENSWEAR_DAUGHTER_PPG if SHIELD_SENSWEAR_PPG
+	default SENSWEAR_DAUGHTER_TEMPERATURE if SHIELD_SENSWEAR_TEMPERATURE
+	default SENSWEAR_DAUGHTER_HAPTIC if SHIELD_SENSWEAR_HAPTIC
+	default SENSWEAR_DAUGHTER_NONE
+
+config SENSWEAR_DAUGHTER_NONE
+	bool "No daughter board"
+
+config SENSWEAR_DAUGHTER_TOUCH
+	bool "Touch daughter board"
+
+config SENSWEAR_DAUGHTER_PPG
+	bool "PPG daughter board"
+
+config SENSWEAR_DAUGHTER_TEMPERATURE
+	bool "Temperature daughter board"
+
+config SENSWEAR_DAUGHTER_HAPTIC
+	bool "Haptic daughter board"
+
+endchoice
+
+config SENSWEAR_DAUGHTER_PRESENT
+	bool
+	default y if SENSWEAR_DAUGHTER_TOUCH
+	default y if SENSWEAR_DAUGHTER_PPG
+	default y if SENSWEAR_DAUGHTER_TEMPERATURE
+	default y if SENSWEAR_DAUGHTER_HAPTIC
+
+config SENSWEAR_SYS_I2C
+	bool "SensWear shared system I2C bus wrapper"
+	depends on I2C
+	depends on DT_HAS_SENSWEAR_SYS_I2C_ENABLED
+	default y
+	help
+	  Ownership-locking wrapper driver over a Nordic I2C controller. Devices
+	  depend on it via a `bus = <&sys_i2c>` phandle and use the sys_i2c_* API.
+
+config SENSWEAR_SYS_I2C_INIT_PRIORITY
+	int "sys_i2c init priority"
+	depends on SENSWEAR_SYS_I2C
+	default 60
+	help
+	  POST_KERNEL init priority for the sys_i2c wrapper. Must be greater than
+	  I2C_INIT_PRIORITY so the wrapped controller is initialised first.
+
+config SENSWEAR_SYS_SPI
+	bool "SensWear shared system SPI bus wrapper"
+	depends on SPI
+	depends on DT_HAS_SENSWEAR_SYS_SPI_ENABLED
+	default y
+	help
+	  Ownership-locking wrapper driver over a Nordic SPI controller. Devices
+	  depend on it via a `bus = <&sys_spi>` phandle and use the sys_spi_* API.
+
+config SENSWEAR_SYS_SPI_INIT_PRIORITY
+	int "sys_spi init priority"
+	depends on SENSWEAR_SYS_SPI
+	default 80
+	help
+	  POST_KERNEL init priority for the sys_spi wrapper. Must be greater than
+	  SPI_INIT_PRIORITY so the wrapped controller is initialised first.
+
+config SENSWEAR_M95P_DISK
+	bool "Expose the M95P EEPROM as a disk-access block device"
+	depends on SENSWEAR_M95P_DRIVER
+	depends on DISK_ACCESS
+	help
+	  Registers the M95P EEPROM with the Zephyr disk-access subsystem under
+	  the name "eeprom" so a filesystem (LittleFS over a block device) can
+	  be mounted on it. One 512-byte logical sector maps to one M95P page.
+
+config SENSWEAR_M95P_DISK_AUTOMOUNT
+	bool "Mount the M95P LittleFS filesystem at boot"
+	depends on SENSWEAR_M95P_DISK
+	depends on FILE_SYSTEM_LITTLEFS && FS_LITTLEFS_BLK_DEV
+	help
+	  Automatically mount the LittleFS filesystem on the M95P during system
+	  init. When disabled, call m95p_fs_mount() explicitly from application
+	  code.
+
+# Board driver presence. Each symbol is the single source of truth for whether
+# its driver is compiled: the per-type cmakes under boards/.../drivers gate their
+# sources directly on these CONFIG_ symbols.
+
+config SENSWEAR_BQ25180_DRIVER
+	bool "BQ25180 charger driver"
+	depends on SENSWEAR_SYS_I2C
+	default y
+	select SENSWEAR_DEVICE_DRIVER_EVENTS
+	help
+	  Build the BQ25180 charger / power-path controller driver. The driver
+	  posts interrupt activity through the device driver event manager, so it
+	  is enabled automatically.
+
+config SENSWEAR_BQ27427_DRIVER
+	bool "BQ27427 fuel-gauge driver"
+	depends on SENSWEAR_SYS_I2C
+	default y
+	select SENSWEAR_DEVICE_DRIVER_EVENTS
+	help
+	  Build the BQ27427 fuel-gauge driver. The driver posts interrupt activity
+	  through the device driver event manager, so it is enabled automatically.
+
+config SENSWEAR_BHI360_DRIVER
+	bool "BHI360 IMU driver"
+	depends on SPI
+	default y
+	help
+	  Build the BHI360 IMU driver.
+
+config SENSWEAR_LP5562_DRIVER
+	bool "LP5562 LED controller driver"
+	depends on SENSWEAR_SYS_I2C
+	default y
+	help
+	  Build the LP5562 LED controller driver.
+
+config SENSWEAR_M95P_DRIVER
+	bool "M95P EEPROM driver"
+	depends on SPI
+	default y
+	help
+	  Build the M95P serial-page EEPROM driver.
+
+config SENSWEAR_TPSM83102_DRIVER
+	bool "TPSM83102 regulator driver"
+	depends on SENSWEAR_SYS_I2C
+	default y
+	help
+	  Build the TPSM83102 buck regulator driver.
+
+config SENSWEAR_RTC_DRIVER
+	bool "Software real-time clock"
+	default y
+	select SENSWEAR_DEVICE_DRIVER_EVENTS
+	help
+	  Build the SensWear software RTC. The nRF54L15 has no battery-backed
+	  calendar RTC, so this driver maintains wall-clock time on the GRTC-backed
+	  system clock (the SYS_CLOCK_REALTIME / POSIX time() base), persists it to
+	  Settings/NVS, and exposes minute/hour/day and one-shot alarms through the
+	  device-event manager.
+
+if SENSWEAR_RTC_DRIVER
+
+config SENSWEAR_RTC_AUTO_INIT
+	bool "Seed the wall clock at system startup"
+	default y
+	help
+	  Run rtc_init() from a SYS_INIT hook at APPLICATION priority so the wall
+	  clock (and POSIX time()) is restored from Settings before application
+	  code runs. Disable to call rtc_init() manually.
+
+config SENSWEAR_RTC_INIT_PRIORITY
+	int "rtc auto-init priority"
+	depends on SENSWEAR_RTC_AUTO_INIT
+	default 90
+	help
+	  APPLICATION-phase SYS_INIT priority for the RTC. Must run after the flash
+	  and Settings backends are initialised.
+
+endif # SENSWEAR_RTC_DRIVER
+
+config SENSWEAR_DAUGHTER_IF_DRIVER
+	bool "Daughter-board connector GPIO arbiter"
+	depends on GPIO
+	default y
+	help
+	  Build the daughter-board interface driver. It aggregates the connector's
+	  shared GPIO lines and arbitrates, at runtime, which consumer driver may
+	  control each line so two drivers cannot fight over the same pin.
+
+config SENSWEAR_DEVICE_DRIVER_EVENTS
+	bool "SensWear device driver event manager"
+	help
+	  Enable the centralized device driver event manager. This provides a
+	  shared message queue for device interrupt handlers to post events that
+	  are consumed by a single event-processing thread, keeping device handling
+	  in one place and on one stack.
+
+if SENSWEAR_DEVICE_DRIVER_EVENTS
+
+config SENSWEAR_DEVICE_DRIVER_EVENTS_MAX
+	int "Maximum number of queued device driver events"
+	default 16
+	range 1 128
+	help
+	  Maximum number of events that can be queued in the device driver event
+	  manager at any given time. Each queued event consumes memory proportional
+	  to the size of struct device_driver_event_t (currently 16 bytes).
+
+config SENSWEAR_DEVICE_DRIVER_EVENTS_AUTO_INIT
+	bool "Automatically initialize device driver events at system startup"
+	default y
+	help
+	  If enabled, the device driver event manager will be automatically
+	  initialized at POST_KERNEL initialization priority with
+	  CONFIG_SENSWEAR_DEVICE_DRIVER_EVENTS_MAX events. If disabled, the
+	  application must call device_driver_event_init() manually before posting
+	  or waiting for events.
+
+endif # SENSWEAR_DEVICE_DRIVER_EVENTS
+
+config SENSWEAR_DEVICE_MANAGER
+	bool "SensWear device manager (zbus message streams)"
+	select ZBUS
+	select ZBUS_RUNTIME_OBSERVERS
+	select SENSWEAR_DEVICE_DRIVER_EVENTS
+	help
+	  Enable the device manager: a single publisher that drains the shared
+	  device event queue, drives each device's interrupt handler, and publishes
+	  decoded per-message-type streams over zbus for application actors (the BLE
+	  manager, storage, app logic, ...) to subscribe to. Leave this disabled for
+	  isolated device or shield bring-up tests, which replace the application and
+	  do not need the manager.
+
+menu "PULSE on-device feasibility benchmark"
+
+config SENSWEAR_PULSE_BENCHMARK
+	bool "Build the PULSE measurement application"
+	depends on SENSWEAR_DAUGHTER_NONE
+	depends on FPU
+	help
+	  Replace the out-of-box application with the reproducible Section V
+	  measurement image. The image retains a serial result exporter, but logging,
+	  the shell, and visual indicators are disabled by the supplied release
+	  configuration. Four otherwise-unused daughter connector GPIOs delimit event
+	  phases for an external current analyzer.
+
+if SENSWEAR_PULSE_BENCHMARK
+
+config SENSWEAR_PULSE_ALGORITHM
+	bool "Include the PULSE model, state, and exchange protocol"
+	default y
+	help
+	  Enable the frozen HAR encoder, personalized head, peer table, gradient
+	  computation, and benchmark-only GATT exchange. Disable this in the matched
+	  sensing-and-BLE baseline image used to calculate incremental flash, RAM,
+	  and energy.
+
+config SENSWEAR_PULSE_CORRECTNESS
+	bool "Include canonical reference vectors and run the correctness check"
+	depends on SENSWEAR_PULSE_ALGORITHM
+	default n
+	help
+	  Add full FP32 reference gradients and the expected mixed head. The generator
+	  requires PyTorch and fails configuration if PULSE_FIXTURE_PYTHON cannot
+	  import it. This prevents a portable NumPy fallback from being mistaken for
+	  the simulation-framework reference. This deliberately increases flash and
+	  is therefore a validation image, not the image used for resource or energy
+	  measurements.
+
+config SENSWEAR_PULSE_LIVE_IMU_BASELINE
+	bool "Run the BHI360 physical streams behind the replay workload"
+	depends on SENSWEAR_BHI360_DRIVER && SENSWEAR_DEVICE_MANAGER
+	default y
+	help
+	  Keep the 100 Hz BHI360 physical streams active while deterministic windows
+	  are replayed. This provides the sensing component of the matched baseline;
+	  the replay remains explicitly labelled and is not presented as live model
+	  input.
+
+config SENSWEAR_PULSE_REPETITIONS
+	int "Post-warm-up repetitions per event path"
+	range 100 10000
+	default 100
+
+config SENSWEAR_PULSE_WARMUP_REPETITIONS
+	int "Warm-up repetitions per event path"
+	range 1 100
+	default 5
+
+config SENSWEAR_PULSE_METRIC_RECORDS
+	int "Buffered metric records"
+	range 1 64
+	default 4
+	help
+	  Records are emitted outside GPIO-delimited events and the buffer is then
+	  reused. Keeping it small avoids hiding transient memory in the benchmark.
+
+config SENSWEAR_PULSE_GPIO_MARKERS
+	bool "Drive daughter-connector GPIO measurement markers"
+	default n
+	help
+	  Drive the legacy event gate and three-bit stage code on the daughter
+	  connector. This is optional: firmware wall-clock timing and markerless
+	  NGMO2 capture do not require accessible GPIO pins.
+
+config SENSWEAR_PULSE_KEYSIGHT_FIG4A_CAPTURE
+	bool "Run the reduced Keysight 34465A Figure 4a campaign"
+	depends on SENSWEAR_PULSE_ALGORITHM
+	depends on !SENSWEAR_PULSE_NGMO2_AUTONOMOUS_CAPTURE
+	depends on !SENSWEAR_PULSE_UART_PACED_CAPTURE
+	default n
+	help
+	  Run only the local and accepted-connected blocks at a fixed minimum event
+	  period. The Keysight uses its internal DC-current level trigger, so this
+	  mode does not require access to a firmware GPIO marker. It is designed for
+	  measuring the automatically elected initiator and responder in two
+	  separate runs with one DMM; it is not a simultaneous pair capture.
+
+config SENSWEAR_PULSE_NGMO2_AUTONOMOUS_CAPTURE
+	bool "Run one autonomous NGMO2 event per boot"
+	depends on SENSWEAR_PULSE_ALGORITHM
+	depends on NVS && FLASH_MAP
+	default n
+	help
+	  Run exactly one configured path at an absolute deadline after power-on,
+	  without UART or GPIO coordination. A compact outcome proof is committed
+	  to internal NVS only after the analyzer acquisition has ended. This is
+	  the primary power-measurement mode when debug boards and FPC cables are
+	  physically absent.
+
+choice SENSWEAR_PULSE_NGMO2_AUTONOMOUS_PATH
+	prompt "Autonomous NGMO2 event path"
+	depends on SENSWEAR_PULSE_NGMO2_AUTONOMOUS_CAPTURE
+	default SENSWEAR_PULSE_NGMO2_PATH_LOCAL
+
+config SENSWEAR_PULSE_NGMO2_PATH_LOCAL
+	bool "Local update while connected"
+
+config SENSWEAR_PULSE_NGMO2_PATH_NO_CONTACT
+	bool "No-contact scan and local fallback"
+
+config SENSWEAR_PULSE_NGMO2_PATH_ACCEPTED_CONNECTED
+	bool "Accepted exchange from an established connection"
+
+config SENSWEAR_PULSE_NGMO2_PATH_ACCEPTED_DISCOVERY
+	bool "Disconnect, discover, exchange, and disconnect"
+
+endchoice
+
+config SENSWEAR_PULSE_NGMO2_EVENT_DEADLINE_MS
+	int "Autonomous event deadline after boot (milliseconds)"
+	depends on SENSWEAR_PULSE_NGMO2_AUTONOMOUS_CAPTURE
+	range 25000 120000
+	default 45000
+	help
+	  Absolute uptime at which the initiator dispatches its single event. The
+	  default leaves time for boot/link setup and a quiet guard after a host
+	  trigger at 25 seconds. Preflight UART runs must confirm this margin.
+
+config SENSWEAR_PULSE_NGMO2_PERSIST_DEADLINE_MS
+	int "Proof persistence deadline after boot (milliseconds)"
+	depends on SENSWEAR_PULSE_NGMO2_AUTONOMOUS_CAPTURE
+	range 60000 300000
+	default 135000
+	help
+	  Absolute uptime at which the outcome proof is written to NVS. Keep this
+	  later than the complete NGMO2 acquisition; the documented default capture
+	  runs from approximately 25 to 125 seconds after output enable.
+
+config SENSWEAR_PULSE_NGMO2_EXPORT_ONLY
+	bool "Export stored autonomous proofs and hold"
+	depends on SENSWEAR_PULSE_NGMO2_AUTONOMOUS_CAPTURE
+	depends on SERIAL && UART_CONSOLE
+	default n
+	help
+	  Print every valid stored proof at boot and execute no BLE or model event.
+	  Use only after power captures, with analyzer outputs off, when a debug board
+	  may be reattached for record recovery.
+
+config SENSWEAR_PULSE_UART_PACED_CAPTURE
+	bool "Pace one capture envelope with READY/GO/DUMP over UART"
+	depends on SERIAL && UART_CONSOLE
+	depends on !SENSWEAR_PULSE_NGMO2_AUTONOMOUS_CAPTURE
+	default n
+	help
+	  Before each initiator trial, print a PULSE_READY identity and wait for a
+	  GO line. After a quiet guard, execute exactly one trial without printing,
+	  then wait through another guard and hold all metric output until DUMP.
+	  The responder also holds an accepted-session record until DUMP. This is
+	  intended for one synchronized two-channel NGMO2 acquisition per trial.
+
+config SENSWEAR_PULSE_CAPTURE_QUIET_GUARD_MS
+	int "UART-paced pre/post quiet guard (milliseconds)"
+	depends on SENSWEAR_PULSE_UART_PACED_CAPTURE
+	range 20 10000
+	default 250
+	help
+	  Idle time before and after the capture envelope. The NGMO2 importer uses
+	  samples from both guards to estimate the same-capture idle current and
+	  rejects a capture that cannot contain both complete guards.
+
+config SENSWEAR_PULSE_PEER_LIMIT
+	int "Maximum peers in the utility table"
+	range 1 64
+	default 8
+
+config SENSWEAR_PULSE_START_DELAY_MS
+	int "Delay before automatic measurements (milliseconds)"
+	range 1000 60000
+	default 5000
+	help
+	  Allows both boards and optional serial capture instrumentation to settle
+	  before the ordinary multi-event campaign. Autonomous NGMO2 mode uses its
+	  own absolute event deadline instead.
+
+config SENSWEAR_PULSE_EVENT_GAP_MS
+	int "Quiet gap between measured events (milliseconds)"
+	range 20 10000
+	default 250
+
+config SENSWEAR_PULSE_MIN_EVENT_PERIOD_MS
+	int "Minimum event start-to-start period (milliseconds)"
+	range 0 60000
+	default 0
+	help
+	  When nonzero, add enough post-event quiet time that consecutive event
+	  starts are separated by at least this period. The reduced Keysight campaign
+	  uses this to let a current-level-triggered record finish and re-arm even
+	  when a measured event fails early. Ordinary campaigns leave it disabled.
+
+config SENSWEAR_PULSE_DISCOVERY_SETTLE_MS
+	int "Responder-ready guard before a measured discovery (milliseconds)"
+	range 0 10000
+	default 500
+	help
+	  Unmeasured guard after an intentional disconnect. It lets the responder
+	  finish result export and resume advertising before the initiator raises
+	  the discovery event gate, so UART quiet-gap skew is not charged as BLE
+	  discovery latency.
+
+config SENSWEAR_PULSE_EVENT_WORKQUEUE_STACK_SIZE
+	int "Dedicated PULSE event workqueue stack size"
+	range 2048 16384
+	default 4096
+	help
+	  Stack allocated to the dedicated workqueue that executes one PULSE event
+	  per work item. Bluetooth callbacks run on their own threads and only signal
+	  this worker, so event code may safely wait for protocol progress.
+
+config SENSWEAR_PULSE_EXCHANGE_TIMEOUT_MS
+	int "Exchange/discovery timeout (milliseconds)"
+	range 1000 20000
+	default 20000
+	help
+	  Leaves explicit headroom below the Cortex-M DWT counter's 32-bit wrap
+	  period (about 33.55 seconds at 128 MHz), including scan timeout exit and
+	  local fallback work. The 64-bit wall timer remains authoritative for
+	  intervals that cross a cycle-counter wrap.
+
+config SENSWEAR_PULSE_ROLE_OVERRIDE
+	int "Role override (0=automatic, 1=initiator, 2=responder)"
+	range 0 2
+	default 0
+	help
+	  Automatic mode assigns the central/initiator role to the board with the
+	  lexicographically lower identity address. Fixed roles are provided only for
+	  controlled debugging; use automatic mode for the one-image experiment.
+
+config SENSWEAR_PULSE_PAIR_ID
+	string "Board-pair identifier recorded in metadata"
+	default "operator_required"
+	help
+	  Shared identifier for the two boards in one independent experimental pair.
+	  Override this for a capture or annotate it with tools/pulse during import;
+	  do not put a device serial number or participant identifier here.
+
+config SENSWEAR_PULSE_HARDWARE_REVISION
+	string "Hardware revision recorded in benchmark metadata"
+	default "operator_required"
+	help
+	  Exact SensWear PCB/assembly revision used for the measurement. Set this in
+	  the final experiment overlay; do not infer a hardware revision from the
+	  board target or the SoC name.
+
+endif # SENSWEAR_PULSE_BENCHMARK
+
+endmenu
+
+# Driver bring-up tests (tests/drivers). All off by default. Enabling exactly
+# one replaces the application main() with the selected test main(); see
+# tests/drivers/tests.cmake. These are Kconfig symbols (not CMake options) so
+# the selection propagates from the sysbuild top-level build / a CMake preset
+# down into this image.
+
+config SENSWEAR_TEST_BQ25180_DRIVER
+	bool "Build the BQ25180 charger bring-up test"
+	help
+	  Replace the application with the BQ25180 charger driver bring-up test.
+
+config SENSWEAR_TEST_BQ27427_DRIVER
+	bool "Build the BQ27427 fuel-gauge bring-up test"
+	help
+	  Replace the application with the BQ27427 fuel-gauge driver bring-up test.
+
+config SENSWEAR_TEST_BHI360_DRIVER
+	bool "Build the BHI360 IMU bring-up test"
+	help
+	  Replace the application with the BHI360 IMU driver bring-up test.
+
+config SENSWEAR_TEST_LP5562_DRIVER
+	bool "Build the LP5562 LED controller bring-up test"
+	help
+	  Replace the application with the LP5562 LED controller bring-up test.
+
+config SENSWEAR_TEST_M95P_DRIVER
+	bool "Build the M95P EEPROM bring-up test"
+	help
+	  Replace the application with the M95P EEPROM driver bring-up test.
+
+config SENSWEAR_TEST_RTC_DRIVER
+	bool "Build the software RTC bring-up test"
+	depends on SENSWEAR_RTC_DRIVER
+	help
+	  Replace the application with the software RTC driver bring-up test
+	  (tests/drivers/main_test_rtc.c). Sets a known time, reads it back through
+	  both the rtc API and POSIX time(), and exercises the minute and one-shot
+	  alarms.
+
+config SENSWEAR_TEST_TPSM83102_DRIVER
+	bool "Build the TPSM83102 regulator bring-up test"
+	help
+	  Replace the application with the TPSM83102 regulator driver bring-up test.
+
+config SENSWEAR_TEST_DEVICE_MANAGER
+	bool "Build the device manager test"
+	select SENSWEAR_DEVICE_MANAGER
+	help
+	  Replace the application with the device manager test
+	  (tests/device_manager/main_test_device_manager.c). Enables the device manager and
+	  its zbus streams, subscribes to every stream, and drives the fuel gauge (and
+	  the haptic motor when the senswear_haptic shield is present) to exercise the
+	  publish pipeline.
+
+config SENSWEAR_TEST_DRV2605_DRIVER
+	bool "Build the DRV2605 haptics bring-up test"
+	depends on SENSWEAR_DRV2605_DRIVER
+	help
+	  Replace the application with the DRV2605 haptics driver bring-up test
+	  (tests/shields/main_test_drv2605.c). Requires the senswear_haptic shield
+	  (build with SHIELD=senswear_haptic) so the driver and its devicetree node
+	  are present.
+
+config SENSWEAR_TEST_MAX30101_DRIVER
+	bool "Build the MAX30101 PPG bring-up test"
+	depends on SHIELD_SENSWEAR_PPG
+	help
+	  Replace the application with the MAX30101 PPG driver bring-up test
+	  (tests/shields/main_test_max30101.c). Requires the senswear_ppg shield
+	  (build with SHIELD=senswear_ppg) so the driver and its devicetree node
+	  are present.
+
+config SENSWEAR_TEST_MAX30208_DRIVER
+	bool "Build the MAX30208 temperature bring-up test"
+	depends on SHIELD_SENSWEAR_TEMPERATURE
+	help
+	  Replace the application with the MAX30208 temperature driver bring-up test
+	  (tests/shields/main_test_max30208.c). Requires the senswear_temperature
+	  shield (build with SHIELD=senswear_temperature) so the driver and its
+	  devicetree node are present.
+
+config SENSWEAR_TEST_MTCH6102_DRIVER
+	bool "Build the MTCH6102 touch bring-up test"
+	depends on SHIELD_SENSWEAR_TOUCH
+	help
+	  Replace the application with the MTCH6102 touch driver bring-up test
+	  (tests/shields/main_test_mtch6102.c). Requires the senswear_touch shield
+	  (build with SHIELD=senswear_touch) so the driver and its devicetree node
+	  are present.
+
+endmenu
+
+source "Kconfig.zephyr"

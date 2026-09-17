@@ -1,0 +1,93 @@
+{
+  "checkpoint": "/var/home/mattia/DeepRAP/data/checkpoints/cifar10_encoder.pt",
+  "dataset": {
+    "evaluation": {
+      "data_file": "/var/home/mattia/DeepRAP/data/processed/cifar10/data.h5",
+      "num_samples": 2500,
+      "source_files": [],
+      "splits": [
+        "validation"
+      ]
+    },
+    "files": {
+      "data": "/var/home/mattia/DeepRAP/data/processed/cifar10/data.h5",
+      "descriptor": "/var/home/mattia/DeepRAP/data/processed/cifar10/dataset.json",
+      "manifest": "/var/home/mattia/DeepRAP/data/processed/cifar10/manifest.csv"
+    },
+    "name": "cifar10",
+    "requested_path": "../../data/processed/cifar10",
+    "total_samples": 60000,
+    "training": {
+      "data_file": "/var/home/mattia/DeepRAP/data/processed/cifar10/data.h5",
+      "num_samples": 10000,
+      "source_files": [],
+      "splits": [
+        "pretrain"
+      ]
+    }
+  },
+  "elapsed_seconds": 3791.008806,
+  "format_version": 1,
+  "model": {
+    "classifier": "MLPClassifier(hidden_dims=[64])",
+    "embedding_dim": 64,
+    "encoder": "image_encoder_tiny_cnn",
+    "encoder_kwargs": {
+      "embedding_dim": 64,
+      "input_channels": 3
+    },
+    "input_branches": [
+      "image"
+    ],
+    "num_classes": 10
+  },
+  "result": {
+    "best_epoch": 49,
+    "best_eval_accuracy": 0.6864,
+    "best_eval_f1": 0.6839864872360637,
+    "best_eval_loss": 1.4904607277870179,
+    "checkpoint_contains": "best_encoder_only",
+    "epochs_completed": 69,
+    "stop_reason": "early_stopping",
+    "stopped_early": true
+  },
+  "runtime": {
+    "h5py": "3.16.0",
+    "numpy": "2.4.4",
+    "python": "3.14.7",
+    "pytorch": "2.13.0+cu126"
+  },
+  "status": "completed",
+  "training_log": "/var/home/mattia/DeepRAP/data/checkpoints/cifar10_encoder_training_log.csv",
+  "training_parameters": {
+    "batch_size": 256,
+    "cache_in_memory": true,
+    "device_requested": "cuda",
+    "device_resolved": "cuda",
+    "early_stopping": {
+      "min_delta": 0.001,
+      "mode": "max",
+      "monitor": "eval_f1",
+      "patience": 20,
+      "restore_best": true
+    },
+    "epochs": 100,
+    "eval_split_priority": [
+      "validation",
+      "test"
+    ],
+    "f1_average": "macro",
+    "learning_rate": 0.001,
+    "log_interval": 1,
+    "loss": "cross_entropy",
+    "num_workers": 8,
+    "optimizer": "AdamW",
+    "seed": 42,
+    "train_split_priority": [
+      "pretrain",
+      "train",
+      "full"
+    ],
+    "weight_decay": 0.0001
+  }
+}

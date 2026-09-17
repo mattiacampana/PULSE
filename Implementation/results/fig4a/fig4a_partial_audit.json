@@ -1,0 +1,43 @@
+{
+  "status": "partial_initiator_only_not_complete_two_role_figure",
+  "initiator_raw_sha256": "765e37d6c82f8b44342b6bc5d72d014d5ecd7b8d22554a09fc54f766b019775a",
+  "initiator_samples_sha256": "b4e9661a56a3c1644e95fae2f73d0d1f8908d78c524bac532dc0bb3b69e86c16",
+  "source_voltage_v": 3.7,
+  "sampling_rate_hz": 50.0,
+  "pre_event_s": 0.4,
+  "post_event_s": 4.1,
+  "local": {
+    "n": 100,
+    "median_energy_mj": 42.884807529457504,
+    "p25_energy_mj": 42.17524342647375,
+    "p75_energy_mj": 43.4318789572625,
+    "p95_energy_mj": 43.7642676351595,
+    "mean_energy_mj": 42.757235230419504,
+    "median_preevent_power_mw": 4.488166386325
+  },
+  "accepted_connected_initiator": {
+    "n": 100,
+    "median_energy_mj": 26.8501924583425,
+    "p25_energy_mj": 26.456778175368747,
+    "p75_energy_mj": 27.284682081711253,
+    "p95_energy_mj": 27.737974328764494,
+    "mean_energy_mj": 26.8526974101795,
+    "median_preevent_power_mw": 4.57907026645
+  },
+  "responder_diagnostic": {
+    "raw_readings": 58264,
+    "sha256": "1f1f27127677ba555888164ba639e812a438275612c5e18f5adad64121edbe3e",
+    "adjacent_exact_repeats": 1,
+    "invalid_values": 85,
+    "candidate_onsets": 104,
+    "invalid_event_windows": 51,
+    "manifest_present": false
+  },
+  "limitations": [
+    "initiator event-path labels follow capture schedule; exact power-trial UART outcomes unavailable",
+    "responder stream contains invalid DMM readings and has no completed capture manifest",
+    "the two role runs were sequential and cannot yield simultaneous pair power",
+    "power-capture firmware revision differs from archived latency/resource release revision",
+    "source-side current includes DMM series burden"
+  ]
+}

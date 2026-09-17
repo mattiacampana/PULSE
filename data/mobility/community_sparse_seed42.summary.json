@@ -1,0 +1,29 @@
+{
+  "model": "community",
+  "seed": 42,
+  "num_nodes": 10,
+  "duration": 86400,
+  "time_step": 20,
+  "num_contact_events": 4236,
+  "num_unique_pairs": 45,
+  "mean_events_per_snapshot": 0.9803286276324925,
+  "parameters": {
+    "contact_probability": 0.1,
+    "persistence": 0.8,
+    "num_communities": 3,
+    "intra_contact_probability": 0.07,
+    "inter_contact_probability": 0.004
+  },
+  "community_by_trace_node": {
+    "trace_0": 2,
+    "trace_1": 0,
+    "trace_2": 0,
+    "trace_3": 1,
+    "trace_4": 0,
+    "trace_5": 2,
+    "trace_6": 1,
+    "trace_7": 0,
+    "trace_8": 1,
+    "trace_9": 2
+  }
+}
